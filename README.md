@@ -1,5 +1,8 @@
 # opu-sim
 
+Simulator for [OPU: An FPGA-based Overlay Processor for Convolutional Neural Networks](http://eda.ee.ucla.edu/pub/J93.pdf). 
+Descriptions about data structures and fucntions can be found in the [doc](https://github.com/OPU-Lab/opu-sim/blob/master/README_Summary.md)
+
 ## CMake Build
 ```
 mkdir build
