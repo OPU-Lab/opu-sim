@@ -16,7 +16,7 @@ install docker
 ```
 sh docker_install.sh
 ```
-build
+build a container with dependencies for the simulator
 ```
 sudo docker build -f Dockerfile --tag opu-sim:1.0 .
 ```
@@ -36,6 +36,8 @@ sudo docker run --rm --pid=host\
                      opu-sim:1.0\
                      /bin/bash
 ```
+then you can clone the repo and run cmake build in the container.
+
 detach (can attach later) : ``ctrl+p`` followed by ``ctrl+q``
 
 exit (cannot attach later): ``exit``
