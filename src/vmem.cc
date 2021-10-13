@@ -19,12 +19,10 @@ void VirtualMemory::Init() {
   fm = GetAddr(fm_addr_ini);
   wgt = GetAddr(wgt_addr_ini);
   bias = GetAddr(bias_addr_ini);
-  /*
+  /* Example
   FromFile(fm, 416*416*64, "tinyyolo/ifm.bin");
-  //FromFile(wgt, 246336*64, "tinyyolo/weights.bin");
-  //FromFile(bias, 51648, "tinyyolo/bias.bin");
-  FromFile(wgt, 61897728, "yolov3/weights.bin");
-  FromFile(bias, 301640, "yolov3/bias.bin");
+  FromFile(wgt, 246336*64, "tinyyolo/weights.bin");
+  FromFile(bias, 51648, "tinyyolo/bias.bin");
   */
   FromFile(fm, IFM_BYTES, IFM_FILE_PATH, "FM");
   FromFile(wgt, WGT_BYTES, WGT_FILE_PATH, "WEIGHT");

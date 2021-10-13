@@ -52,24 +52,14 @@ class VirtualMemory {
   void* GetBaseAddr();
   // Write
   void Write(addr_t phy_addr, void* data, size_t size);
+  
   // DRAM sections
-  /*
-  addr_t fm_addr_ini {0};
-  addr_t wgt_addr_ini {1638400};
-  addr_t bias_addr_ini {5734400};
-  addr_t ins_addr_ini {5835248};
-  
-  addr_t fm_addr_ini {819200};
-  addr_t wgt_addr_ini {3276800};
-  addr_t bias_addr_ini {6144000};
-  addr_t ins_addr_ini {6154100};
-  */
-  
   addr_t fm_addr_ini {FM_ADDR_INI};
   addr_t wgt_addr_ini {WGT_ADDR_INI};
   addr_t bias_addr_ini {BIAS_ADDR_INI};
   addr_t ins_addr_ini {INS_ADDR_INI};
   
+  // Base addresses
   void* base;
   void* fm;
   void* wgt;
