@@ -41,3 +41,12 @@ then you can clone the repo and run cmake build in the container.
 detach (can attach later) : ``ctrl+p`` followed by ``ctrl+q``
 
 exit (cannot attach later): ``exit``
+
+
+## Test
+
+Check unit test for inner-product units at [test.cc](https://github.com/OPU-Lab/opu-sim/blob/master/src/tests.cc).
+
+```
+./build/runTests
+```
