@@ -424,26 +424,34 @@ void Device::RunCompute(OPUComputeInsn* compute) {
   
   if (skip_exec) return;
   
-  // Load bias first
+  // Fetch 128 bytes of bias and split it into a vector of 64 16bit.
   ipa_.adder_buf_b_.Load<1024>(MemOp(0, 1, 0), bias_ram->BeginPtr(0));
-  std::vector<acc_type> bias = ipa_.adder_buf_b_.AsVec(0, 64/(PRECISION/8), PRECISION*2);
+  std::vector<acc_type> bias = ipa_.adder_buf_b_.AsVec(0, 2*pe/(PRECISION/8), PRECISION*2);
   // Fetch data from SRAMs to IPA's compute buffers and then compute
   int k = 0;
   int wgt_addr = compute->ker_addr_s;
   int tmp_addr = 0;
+  // Read data from SRAM to on-chip input feature map buffer
+  // based on the tiling factor dma_x, dma_y and stride. 
   for (int i = compute->dma_y_min; i <= compute->dma_y_max;
            i += compute->read_y_stride) {
     for (int j = compute->dma_x_min; j <= compute->dma_x_max;
            j += compute->read_x_stride) {
+      // compute->ker_round = # of output channel / rep_num.
+      // e.g: if for every computation round, IPA computes for 8 output channels,
+      // ker_round is set to 4 if the output channel block is 32 and in this case
+      // the input fm block will be reused 4 times.
       for (int p = 0; p < compute->ker_round; p++) {
         initiate_cnt++;
         // Get fm addr
         int fm_addr = i * compute->dma_block_x_size + j;
-        int pe_bytes = sizeof(IPA_t::PE_buf_t::DType);  // 512 (* 8b)
-        int fm_bytes = sizeof(Fm_ram_t::DType);  // 64 (* 8b)
+        int pe_bytes = sizeof(IPA_t::PE_buf_t::DType);  // 512 8-bit data
+        int fm_bytes = sizeof(Fm_ram_t::DType);  // 64 8-bit data
         
         // Load data from sram to ipa rams
-        // Replicate fm -> 512 * 8b
+        // Replicate input fm to correspond with the PE size(e.g:  if we have 512 bytes per PE address 
+        // meaning having 512 macs and 64 bytes per fm address, we replicate the data for fm by 8, in 
+        // which case we can compute the data for 8 output channels in parallel. rep_num = 8 in this case.) 
         int rep_num = 8 << compute->copy_mode;
         int valid_bytes = pe_bytes / rep_num;
         input_type* fm = new input_type[pe_bytes/(PRECISION/8)];
@@ -461,7 +469,9 @@ void Device::RunCompute(OPUComputeInsn* compute) {
         
         // Get wgt addr
         wgt_addr = compute->ker_addr_s + p;
-        // Split ker
+        // Fetch weight data. For 8 bit multiplication, split kernel into 2 and fetch 
+        // 512 bytes for wgt_src_a and wgt_src_b correspondingly. For 16 bit, fetch 
+        // only 512 bytes for wgt_src_a.
         input_type* wgt_src_a = reinterpret_cast<input_type*>(
             ipa_.wgt_buf_a_.BeginPtr(0));
         input_type* wgt_src_b = reinterpret_cast<input_type*>(
@@ -480,9 +490,12 @@ void Device::RunCompute(OPUComputeInsn* compute) {
         std::vector<acc_type> gdb = wgt_ram->AsVec(wgt_addr, 1024/(PRECISION/8), PRECISION);
         writeOut<acc_type, 2*(PRECISION/8)>(os, gdb, dump);
     #endif
-        // Compute
+        // Run IPA to compute inner-product and output_num indicates the number of
+        // output channels that can be computed in each computation round.
         ipa_.Forward(2 << compute->output_num);
 
+        // If we have computed for all the output channels, prepare bias
+        // or partial sum data and copy to adder_b for accumulation
         if (ipa_.GetOutputNum() >= compute->output_channel) {
           // Load out_adder_b
           //   - bias : loaded at the beginning
@@ -490,6 +503,8 @@ void Device::RunCompute(OPUComputeInsn* compute) {
           ipa_.adder_b.clear();
           if (compute->add_bias) {
             for (auto value : bias) {
+              // left shift shift_num_bias bits for bias to match the 
+              // decimal position with the IPA psum output
               ipa_.adder_b.push_back(
                   Saturate(value << compute->shift_num_bias, value > 0, ACC_SIZE));
             }
@@ -502,7 +517,7 @@ void Device::RunCompute(OPUComputeInsn* compute) {
             }
           }
 
-          // Load adder_a from ipa output
+          // Load adder_a from ipa output and accumulate with bias/partial sum results to temporal buffer
           ipa_.Accumulate(
                       compute->shift_num_fm, pe,
                       compute->final_output,
