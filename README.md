@@ -50,3 +50,8 @@ detach (can attach later) : ``ctrl+p`` followed by ``ctrl+q``
 
 exit (cannot attach later): ``exit``
 
+Inside container, generate straight line code for simulation, where each line corresponds to a load/compute/store event in the simulator.
+```
+./compiler/backend -i example/tinyyolo/OPU_IR.json --codegen-non-isa
+```
+
