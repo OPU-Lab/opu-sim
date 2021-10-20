@@ -3,8 +3,6 @@
 Simulator for [OPU: An FPGA-based Overlay Processor for Convolutional Neural Networks](http://eda.ee.ucla.edu/pub/J93.pdf). 
 Descriptions about data structures and fucntions can be found in the [doc](https://github.com/OPU-Lab/opu-sim/blob/master/README_Summary.md).
 
-Check unit test for inner-product units at [test.cc](https://github.com/OPU-Lab/opu-sim/blob/master/src/tests.cc).
-
 
 ## CMake Build
 ```
@@ -12,6 +10,13 @@ mkdir build
 cd build
 cmake ..
 make
+```
+
+## Test
+
+Check unit test for inner-product units at [test.cc](https://github.com/OPU-Lab/opu-sim/blob/master/src/tests.cc).
+```
+./build/runTests
 ```
 
 ## Docker Build
@@ -44,6 +49,4 @@ then you can run cmake build in the container.
 detach (can attach later) : ``ctrl+p`` followed by ``ctrl+q``
 
 exit (cannot attach later): ``exit``
-```
-./build/runTests
-```
+
