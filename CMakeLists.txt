@@ -3,9 +3,9 @@ project (simulator)
 
 set(CMAKE_CXX_FLAGS  "--std=c++11 -g")
 
-include_directories("src")
+include_directories("./")
 
-set(SOURCES src/driver.cc src/instruction.cc src/accelerator.cc src/vmem.cc src/profiler.cc)
+set(SOURCES driver.cc instruction.cc accelerator.cc vmem.cc profiler.cc)
 
 add_executable(simulator ${SOURCES})
 
@@ -13,11 +13,12 @@ target_link_libraries(simulator "-lglog")
 find_path(GLOG_INCLUDE_DIR glog/logging.h)
 target_include_directories(simulator PUBLIC ${GLOG_INCLUDE_DIR})
 
-#add_executable(txt2bin util/txt2bin.cpp)
 
-# Locate GTest
-find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIRS})
+add_executable(txt2bin util/txt2bin.cpp)
 
-add_executable(runTests src/tests.cc)
-target_link_libraries(runTests ${GTEST_LIBRARIES} pthread)
+
+include_directories(../3rdparty/json/single_include)
+set(SOURCES1 driver_json.cc instruction.cc accelerator.cc vmem.cc profiler.cc)
+add_executable(sim-json ${SOURCES1})
+target_link_libraries(sim-json "-lglog")
+target_include_directories(sim-json PUBLIC ${GLOG_INCLUDE_DIR})
