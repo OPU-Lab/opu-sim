@@ -22,3 +22,10 @@ set(SOURCES1 src/driver_json.cc src/instruction.cc src/accelerator.cc src/vmem.c
 add_executable(sim-json ${SOURCES1})
 target_link_libraries(sim-json "-lglog")
 target_include_directories(sim-json PUBLIC ${GLOG_INCLUDE_DIR})
+
+# GTest
+find_package(GTest REQUIRED)
+include_directories(${GTEST_INCLUDE_DIRS})
+set(SOURCES2 src/tests.cc src/instruction.cc src/accelerator.cc src/vmem.cc src/profiler.cc) 
+add_executable(runTests ${SOURCES2})
+target_link_libraries(runTests ${GTEST_LIBRARIES} pthread "-lglog")
