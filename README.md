@@ -5,7 +5,7 @@ Descriptions about data structures and fucntions can be found in the [doc](https
 
 ## Dependency
 
-Install Google Test (Gtest) following the [link](https://www.eriksmistad.no/getting-started-with-google-test-on-ubuntu/).
+If you are not using docker, please install Google Test (Gtest) following the [link](https://www.eriksmistad.no/getting-started-with-google-test-on-ubuntu/).
 
 ## CMake Build
 ```
