@@ -14,6 +14,8 @@ make
 
 ## Test
 
+Install Google Test (Gtest) following the [link](https://www.eriksmistad.no/getting-started-with-google-test-on-ubuntu/).
+
 Check unit test for inner-product units at [test.cc](https://github.com/OPU-Lab/opu-sim/blob/master/src/tests.cc).
 ```
 ./build/runTests
