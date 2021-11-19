@@ -3,6 +3,9 @@
 Simulator for [OPU: An FPGA-based Overlay Processor for Convolutional Neural Networks](http://eda.ee.ucla.edu/pub/J93.pdf). 
 Descriptions about data structures and fucntions can be found in the [doc](https://github.com/OPU-Lab/opu-sim/blob/master/README_Summary.md).
 
+## Dependency
+
+Install Google Test (Gtest) following the [link](https://www.eriksmistad.no/getting-started-with-google-test-on-ubuntu/).
 
 ## CMake Build
 ```
@@ -13,8 +16,6 @@ make
 ```
 
 ## Test
-
-Install Google Test (Gtest) following the [link](https://www.eriksmistad.no/getting-started-with-google-test-on-ubuntu/).
 
 Check unit test for inner-product units at [test.cc](https://github.com/OPU-Lab/opu-sim/blob/master/src/tests.cc).
 ```
