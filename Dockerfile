@@ -14,4 +14,7 @@ RUN sudo apt-get install -y python3-dev python3-setuptools gcc \
 RUN pip3 install --upgrade pip
 RUN pip3 install -U pytest 
 RUN pip3 install numpy
+# Gtest
+RUN apt-get install libgtest-dev
+RUN cd /usr/src/gtest && cmake CMakeLists.txt && make && cp *.a /usr/lib
 RUN mkdir ws
